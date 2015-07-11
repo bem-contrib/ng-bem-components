@@ -1,0 +1,29 @@
+{
+    "rules": {
+        "indent" : [2, 4],
+        "semi" : [2, "always"],
+        "eqeqeq" : 2,
+        "no-eval" : 2,
+        "guard-for-in" : 2,
+        "max-nested-callbacks" : [2, 4],
+        "max-len" : [2, 120, 4],
+        "no-caller" : 2,
+        "no-empty" : 2,
+        "quotes" : [2, "single", "avoid-escape"],
+        "dot-notation" : 2,
+        "no-undef" : 2,
+        "no-trailing-spaces" : 0,
+        "key-spacing" : 0,
+        "strict" : 0,
+        "no-use-before-define" : [2, "nofunc"],
+        "curly" : [2, "multi-line"],
+        "space-infix-ops": 1
+    },
+    "env": {
+        "browser" : true
+    },
+    "globals" : {
+        "modules" : true,
+        "angular" : true
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "plugins": ["jscs-bem"],
+    "preset": "bem",
+
+    "excludeFiles": [
+        ".enb/tmp/**",
+        ".git/**",
+        ".c9/**",
+        "libs/**",
+        "node_modules/**"
+    ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "ng-bem-components",
+  "version": "0.0.1",
+  "description": "Angular directives for BEM Components Library",
+  "bugs": "https://github.com/bem-incubator/ng-bem-components/issues",
+  "main": "angular-bem.js",
+  "ignore": [
+    ".bem/cache",
+    ".enb/tmp",
+    "node_modules",
+    "libs"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "angular": "^1.4.0",
+    "bem-components-dist": "bem/bem-components-dist#v2"
+  },
+  "license": "MIT",
+  "private": true
+}

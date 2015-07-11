@@ -1,0 +1,36 @@
+{
+  "author": "Aleksey Gurianov <alexey@gurianov.com>",
+  "license": "MIT",
+  "name": "ng-bem-components",
+  "version": "0.0.1",
+  "description": "Angular directives for BEM Components Library",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bem-incubator/ng-bem-components.git"
+  },
+  "keywords": [
+    "bem",
+    "ng",
+    "angular"
+  ],
+  "engines": {
+    "node": ">=0.10"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "bower": "1.4.1",
+    "eslint": "0.24.0",
+    "git-hooks": "1.0.0-rc.1",
+    "jscs": "^1.13.1",
+    "jscs-bem": "^0.2.0"
+  },
+  "optionalDependencies": {},
+  "private": true,
+  "scripts": {
+    "deps": "bower i",
+    "test": "npm run lint && npm run unit",
+    "lint": "eslint . && jscs .",
+    "unit": ""
+  }
+}
