@@ -16,14 +16,17 @@
   "engines": {
     "node": ">=0.10"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "bower": "1.4.1",
+    "chai": "3.0.0",
     "eslint": "1.1.0",
     "git-hooks": "1.0.0-rc.1",
     "jscs": "^1.13.1",
-    "jscs-bem": "^0.2.0"
+    "jscs-bem": "^0.2.0",
+    "mocha": "2.2.5",
+    "mocha-phantomjs": "3.5.3",
+    "phantomjs": "1.9.17"
   },
   "optionalDependencies": {},
   "private": true,
@@ -31,6 +34,6 @@
     "deps": "bower i",
     "test": "npm run lint && npm run unit",
     "lint": "eslint . && jscs .",
-    "unit": ""
+    "unit": "mocha-phantomjs test/index.html"
   }
 }

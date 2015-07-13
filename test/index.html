@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" type="text/css" />
+    <link rel="stylesheet" href="../libs/bem-components-dist/desktop/bem-components.dev.css" type="text/css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script src="../libs/jquery/dist/jquery.min.js"></script>
+    <script src="../libs/angular/angular.js"></script>
+    <script src="../libs/bem-components-dist/desktop/bem-components.dev.js+bemhtml.js"></script>
+    <script src="../angular-bem.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script>
+      mocha.ui('bdd');
+      mocha.reporter('html');
+      chai.should();
+    </script>
+    <script src="../libs/angular-mocks/angular-mocks.js"></script>
+    <script src="angular-bem.spec.js"></script>
+    <script>
+      if (window.mochaPhantomJS) {
+          mochaPhantomJS.run();
+      } else {
+          mocha.run();
+      }
+    </script>
+  </body>
+</html>
