@@ -11,7 +11,7 @@ modules.define('angular-bem',
             .value('bemdom', BEMDOM)
             .factory('ngbem', ngBemFactory)
             .directive('ngBem', ngBemDirective)
-            .directive('iBem', iBemDirective);
+            .directive('bem', iBemDirective);
 
         function ngBemFactory($compile) {
             var service = { render : render };
@@ -36,7 +36,7 @@ modules.define('angular-bem',
             };
         }
 
-        function iBemController($scope, $attrs, $element) {
+        function bemController($scope, $attrs, $element) {
             this.bem = $scope.$eval($attrs.bem);
 
             angular.forEach(this.bem, function(v, k){
@@ -46,9 +46,9 @@ modules.define('angular-bem',
 
         function iBemDirective() {
             return {
-                restrict : 'C',
-                require : ['iBem', '?ngModel'],
-                controller : iBemController,
+                restrict : 'A',
+                require : ['bem', '?ngModel'],
+                controller : bemController,
                 link : function(scope, element, attrs, ctrls) {
                     var iBem = ctrls[0],
                         ngModel = ctrls[1];
