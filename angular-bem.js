@@ -36,32 +36,41 @@ modules.define('angular-bem',
             };
         }
 
+        function iBemController($scope, $attrs, $element) {
+            this.bem = $scope.$eval($attrs.bem);
+
+            angular.forEach(this.bem, function(v, k){
+                this.bem[k] = $($element).bem(k);
+            }, this);
+        }
+
         function iBemDirective() {
             return {
                 restrict : 'C',
-                require : '?ngModel',
-                link : function(scope, element, attrs, ngModel) {
+                require : ['iBem', '?ngModel'],
+                controller : iBemController,
+                link : function(scope, element, attrs, ctrls) {
+                    var iBem = ctrls[0],
+                        ngModel = ctrls[1];
+
                     if(!ngModel) return;
 
-                    var bem = scope.$eval(attrs.bem);
-                    angular.forEach(bem, function(v, k){
-                        bem[k] = $(element).bem(k);
-
-                        bem[k].on('change', function(e, data) {
+                    angular.forEach(iBem.bem, function(v, k){
+                        iBem.bem[k].on('change', function(e, data) {
                             if(data && data.source === 'ng-model') {
-                                scope.$evalAsync(setModelValue.bind(bem[k]));
+                                scope.$evalAsync(setModelValue.bind(iBem.bem[k]));
                             } else {
-                                scope.$evalAsync(setViewValue.bind(bem[k]));
+                                scope.$evalAsync(setViewValue.bind(iBem.bem[k]));
                             }
                         });
 
-                        setModelValue.bind(bem[k])();
+                        setModelValue.bind(iBem.bem[k])();
                     });
 
                     ngModel.$render = function() {
                         var value = angular.isUndefined(ngModel.$viewValue)? '' : ngModel.$viewValue;
-                        angular.forEach(bem, function(v, k){
-                            if(bem[k].setVal) bem[k].setVal(value, { source : 'ng-model' });
+                        angular.forEach(iBem.bem, function(v, k){
+                            if(iBem.bem[k].setVal) iBem.bem[k].setVal(value, { source : 'ng-model' });
                         });
                     };
 
