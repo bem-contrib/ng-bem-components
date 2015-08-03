@@ -15,25 +15,32 @@ modules.define('angular-bem',
             .directive('bemMod', bemModDirective)
             .directive('bemEvent', bemEventDirective);
 
-        function ngBemFactory($compile) {
+        function ngBemFactory(bemhtml) {
             var service = { render : render };
 
             return service;
 
-            function render(bemjson, element, scope) {
-                element.replaceWith(
-                    $compile(BEMHTML.apply(bemjson))(scope)
-                );
+            function render(bemjson) {
+                return bemhtml.apply(bemjson);
             }
         }
 
-        function ngBemDirective(ngbem) {
+        function ngBemDirective(ngbem, bemdom, $compile) {
             return {
                 restrict : 'E',
                 link : function(scope, element, attrs) {
-                    var bemjson = scope.$eval(attrs.bemJson || element.text());
+                    var bemjsonExpression = attrs.bemjson || element.text(),
+                        ctx = element;
 
-                    ngbem.render(bemjson, element, scope);
+                    scope.$watch('[' + attrs.observe + ']', function(){
+                        // copy prevents unnecessary call of watch function
+                        var bemjson = angular.copy(scope.$eval(bemjsonExpression));
+
+                        ctx = bemdom.replace(ctx, ngbem.render(bemjson));
+
+                        $compile(ctx)(scope);
+
+                    }, true);
                 }
             };
         }
