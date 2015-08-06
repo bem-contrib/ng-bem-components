@@ -53,8 +53,12 @@ modules.define('angular-bem',
         function bemController($scope, $attrs, $element) {
             this.bem = $scope.$eval($attrs.bem);
 
-            angular.forEach(this.bem, function(v, k) {
-                this.bem[k] = $($element).bem(k);
+            angular.forEach(this.bem, function(v, blockName) {
+                var block;
+
+                Object.defineProperty(this.bem, blockName, { get : function(){
+                    return (block = block || $($element).bem(blockName));
+                } });
             }, this);
         }
 
@@ -69,22 +73,22 @@ modules.define('angular-bem',
 
                     if(!ngModel) return;
 
-                    angular.forEach(iBem.bem, function(v, k) {
-                        iBem.bem[k].on('change', function(e, data) {
+                    angular.forEach(iBem.bem, function(v, blockName) {
+                        iBem.bem[blockName].on('change', function(e, data) {
                             if(data && data.source === 'ng-model') {
-                                scope.$evalAsync(setModelValue.bind(iBem.bem[k]));
+                                scope.$evalAsync(setModelValue.bind(iBem.bem[blockName]));
                             } else {
-                                scope.$evalAsync(setViewValue.bind(iBem.bem[k]));
+                                scope.$evalAsync(setViewValue.bind(iBem.bem[blockName]));
                             }
                         });
 
-                        setModelValue.bind(iBem.bem[k])();
+                        setModelValue.bind(iBem.bem[blockName])();
                     });
 
                     ngModel.$render = function() {
                         var value = angular.isUndefined(ngModel.$viewValue)? '' : ngModel.$viewValue;
-                        angular.forEach(iBem.bem, function(v, k) {
-                            if(iBem.bem[k].setVal) iBem.bem[k].setVal(value, { source : 'ng-model' });
+                        angular.forEach(iBem.bem, function(v, blockName) {
+                            if(iBem.bem[blockName].setVal) iBem.bem[blockName].setVal(value, { source : 'ng-model' });
                         });
                     };
 
@@ -110,10 +114,10 @@ modules.define('angular-bem',
                     scope.$watch(attrs.bemMod, bemModWatchAction, true);
 
                     function setMods(newVal) {
-                        angular.forEach(newVal, function(v, block) {
+                        angular.forEach(newVal, function(v, blockName) {
                             angular.forEach(v, function(modVal, modName) {
                                 this.setMod(modName, modVal);
-                            }, iBem.bem[block]);
+                            }, iBem.bem[blockName]);
                         });
                     }
 
@@ -135,7 +139,7 @@ modules.define('angular-bem',
                 link : function(scope, element, attrs, iBem) {
                     var events = scope.$eval(attrs.bemEvent);
 
-                    angular.forEach(events, function(eventsArray, block) {
+                    angular.forEach(events, function(eventsArray, blockName) {
                         angular.forEach(eventsArray, function(eventDefenition) {
                             var event,
                                 fn;
@@ -156,7 +160,7 @@ modules.define('angular-bem',
                                     fn(scope);
                                 });
                             });
-                        }, iBem.bem[block]);
+                        }, iBem.bem[blockName]);
                     });
                 }
             };
