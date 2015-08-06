@@ -41,6 +41,11 @@ modules.define('angular-bem',
                         $compile(ctx)(scope);
 
                     }, true);
+
+                    scope.$on('$destroy', function(){
+                        bemdom.destruct(ctx);
+                    });
+
                 }
             };
         }
