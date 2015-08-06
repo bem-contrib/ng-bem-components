@@ -13,7 +13,7 @@
   "dependencies": {},
   "devDependencies": {
     "angular": "^1.4.0",
-    "bem-components-dist": "bem/bem-components-dist#v2"
+    "bem-components-dist": "~2.3.0"
   },
   "license": "MIT",
   "private": true
