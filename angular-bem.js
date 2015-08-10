@@ -1,27 +1,58 @@
-modules.define('bemdom', ['i-bem__dom'], function(provide, BEMDOM) {
-    provide(BEMDOM);
-});
+var deps = ['jquery', 'i-bem__dom', 'BEMHTML'];
 
-modules.define('angular-bem',
-    ['BEMHTML', 'bemdom', 'jquery', 'i-bem__dom_init'],
-    function(provide, BEMHTML, BEMDOM, $) {
+modules.isDefined('BEMTREE') &&
+    deps.push('BEMTREE');
+
+modules.define('angular-bem', deps,
+    function(provide, $, BEMDOM, BEMHTML, BEMTREE) {
 
         angular.module('angular-bem', [])
-            .value('bemhtml', BEMHTML)
             .value('bemdom', BEMDOM)
+            .value('bemhtml', BEMHTML)
+            .value('bemtree', BEMTREE)
             .factory('ngbem', ngBemFactory)
             .directive('ngBem', ngBemDirective)
             .directive('bem', iBemDirective)
             .directive('bemMod', bemModDirective)
             .directive('bemEvent', bemEventDirective);
 
-        function ngBemFactory(bemhtml) {
-            var service = { render : render };
+        function ngBemFactory(bemhtml, bemtree, $q, $log) {
+            var service = {
+                render : render,
+                processBemtree : processBemtree,
+                processBemhtml : processBemhtml
+            };
 
             return service;
 
-            function render(bemjson) {
+            function processBemtree(bemjson) {
+                return bemtree.apply(bemjson);
+            }
+
+            function processBemhtml(bemjson) {
                 return bemhtml.apply(bemjson);
+            }
+
+            function render(bemjson, useBemtree) {
+                var deferred = $q.defer(),
+                    promise;
+
+                if(useBemtree) {
+                    angular.isUndefined(bemtree)?
+                        $log.error('BEMTREE is not defined') && deferred.reject() :
+                        processBemtree(bemjson).then(function(result){
+                            deferred.resolve(result);
+                        });
+                } else {
+                    deferred.resolve(bemjson);
+                }
+
+                promise = deferred.promise
+                    .then(function(result){
+                        return processBemhtml(result);
+                    });
+
+                return promise;
             }
         }
 
@@ -30,15 +61,17 @@ modules.define('angular-bem',
                 restrict : 'E',
                 link : function(scope, element, attrs) {
                     var bemjsonExpression = attrs.bemjson || element.text(),
+                        useBemtree = !angular.isUndefined(attrs.bemtree),
                         ctx = element;
 
                     scope.$watch('[' + attrs.observe + ']', function(){
                         // copy prevents unnecessary call of watch function
                         var bemjson = angular.copy(scope.$eval(bemjsonExpression));
 
-                        ctx = bemdom.replace(ctx, ngbem.render(bemjson));
-
-                        $compile(ctx)(scope);
+                        ngbem.render(bemjson, useBemtree).then(function(html){
+                            ctx = bemdom.replace(ctx, html);
+                            $compile(ctx)(scope);
+                        });
 
                     }, true);
 

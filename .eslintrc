@@ -17,7 +17,8 @@
         "strict" : 0,
         "no-use-before-define" : [2, "nofunc"],
         "curly" : [2, "multi-line"],
-        "space-infix-ops": 1
+        "space-infix-ops": 1,
+        "no-unused-expressions": 0
     },
     "env": {
         "browser" : true
