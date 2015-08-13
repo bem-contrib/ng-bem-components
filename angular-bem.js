@@ -12,9 +12,7 @@ modules.define('angular-bem', deps,
             .value('bemtree', BEMTREE)
             .factory('ngbem', ngBemFactory)
             .directive('ngBem', ngBemDirective)
-            .directive('bem', iBemDirective)
-            .directive('bemMod', bemModDirective)
-            .directive('bemEvent', bemEventDirective);
+            .directive('bem', iBemDirective);
 
         function ngBemFactory(bemhtml, bemtree, $q, $log) {
             var service = {
@@ -134,88 +132,6 @@ modules.define('angular-bem', deps,
                     }
                 }
             };
-        }
-
-        function bemModDirective() {
-            return {
-                restrict : 'A',
-                require : 'bem',
-                link : function(scope, element, attrs, iBem) {
-                    var oldVal;
-
-                    scope.$watch(attrs.bemMod, bemModWatchAction, true);
-
-                    function setMods(newVal) {
-                        angular.forEach(newVal, function(v, blockName) {
-                            angular.forEach(v, function(modVal, modName) {
-                                this.setMod(modName, modVal);
-                            }, iBem.bem[blockName]);
-                        });
-                    }
-
-                    function bemModWatchAction(newVal) {
-                        if(!angular.equals(newVal, oldVal)) {
-                            setMods(newVal);
-                        }
-
-                        oldVal = shallowCopy(newVal);
-                    }
-                }
-            };
-        }
-
-        function bemEventDirective($parse) {
-            return {
-                restrict : 'A',
-                require : 'bem',
-                link : function(scope, element, attrs, iBem) {
-                    var events = scope.$eval(attrs.bemEvent);
-
-                    angular.forEach(events, function(eventsArray, blockName) {
-                        angular.forEach(eventsArray, function(eventDefenition) {
-                            var event,
-                                fn;
-
-                            if(eventDefenition.length === 2) {
-                                event = eventDefenition[0];
-                                fn = $parse(eventDefenition[1], null, true);
-                            } else if(eventDefenition.length === 3) {
-                                event = {
-                                    modName : eventDefenition[0],
-                                    modVal : eventDefenition[1]
-                                };
-                                fn = $parse(eventDefenition[2], null, true);
-                            }
-
-                            this.on(event, function() {
-                                scope.$apply(function() {
-                                    fn(scope);
-                                });
-                            });
-                        }, iBem.bem[blockName]);
-                    });
-                }
-            };
-        }
-
-        function shallowCopy(src, dst) {
-            if(angular.isArray(src)) {
-                dst = dst || [];
-
-                for(var i = 0, ii = src.length; i < ii; i++) {
-                    dst[i] = src[i];
-                }
-            } else if(angular.isObject(src)) {
-                dst = dst || {};
-
-                for(var key in src) {
-                    if(!(key.charAt(0) === '$' && key.charAt(1) === '$')) {
-                        dst[key] = src[key];
-                    }
-                }
-            }
-
-            return dst || src;
         }
 
         provide(angular.module('angular-bem'));
