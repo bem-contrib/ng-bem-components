@@ -61,22 +61,21 @@ modules.define('angular-bem', deps,
                 restrict : 'E',
                 link : function(scope, element, attrs) {
                     var bemjsonExpression = attrs.bemjson || element.text(),
-                        useBemtree = !angular.isUndefined(attrs.bemtree),
-                        ctx = element;
+                        useBemtree = !angular.isUndefined(attrs.bemtree);
 
                     scope.$watch('[' + attrs.observe + ']', function(){
                         // copy prevents unnecessary call of watch function
                         var bemjson = angular.copy(scope.$eval(bemjsonExpression));
 
                         ngbem.render(bemjson, useBemtree).then(function(html){
-                            ctx = bemdom.replace(ctx, html);
-                            $compile(ctx)(scope);
+                            bemdom.update(element, html);
+                            $compile(element.children())(scope);
                         });
 
                     }, true);
 
                     scope.$on('$destroy', function(){
-                        bemdom.destruct(ctx);
+                        bemdom.destruct(element.children());
                     });
 
                 }
