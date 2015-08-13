@@ -90,6 +90,8 @@ modules.define('angular-bem', deps,
                     return (block = block || $($element).bem(blockName));
                 } });
             }, this);
+
+            $scope.$bem = this.bem;
         }
 
         function iBemDirective() {
@@ -97,6 +99,7 @@ modules.define('angular-bem', deps,
                 restrict : 'A',
                 require : ['bem', '?ngModel'],
                 controller : bemController,
+                scope : true,
                 link : function(scope, element, attrs, ctrls) {
                     var iBem = ctrls[0],
                         ngModel = ctrls[1];
