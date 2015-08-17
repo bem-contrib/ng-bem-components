@@ -15,13 +15,8 @@ modules.define('angular-bem', deps,
             .directive('bem', iBemDirective);
 
         function ngBemFactory(bemhtml, bemtree, $q, $log) {
-            var service = {
-                render : render,
-                processBemtree : processBemtree,
-                processBemhtml : processBemhtml
-            };
 
-            return service;
+            return render;
 
             function processBemtree(bemjson) {
                 return bemtree.apply(bemjson);
@@ -65,7 +60,7 @@ modules.define('angular-bem', deps,
                         // copy prevents unnecessary call of watch function
                         var bemjson = angular.copy(scope.$eval(bemjsonExpression));
 
-                        ngbem.render(bemjson, useBemtree).then(function(html){
+                        ngbem(bemjson, useBemtree).then(function(html){
                             bemdom.update(element, html);
                             $compile(element.children())(scope);
                         });
