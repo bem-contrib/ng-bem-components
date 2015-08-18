@@ -1,4 +1,7 @@
-var deps = ['jquery', 'i-bem__dom', 'BEMHTML'];
+/*eslint-disable max-len */
+var deps = ['jquery', 'i-bem__dom', 'BEMHTML'],
+    events = 'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' ');
+/*eslint-enable max-len */
 
 modules.isDefined('BEMTREE') &&
     deps.push('BEMTREE');
@@ -142,6 +145,18 @@ modules.define('angular-bem', deps,
                                             data : data
                                         }
                                     });
+                                });
+                            });
+                        }
+                    });
+
+                    angular.forEach(events, function(eventName){
+                        var attrName = attrs.$normalize('ng-' + eventName);
+
+                        if(attrs[attrName]) {
+                            angular.forEach(iBem.bem, function(block) {
+                                block.elem('control').not(block.domElem).on(eventName, function(){
+                                    block.domElem.trigger(eventName);
                                 });
                             });
                         }
