@@ -94,97 +94,90 @@ modules.define('angular-bem', deps,
                 restrict : 'A',
                 require : ['bem', '?ngModel'],
                 controller : bemController,
-                priority : 100,
-                scope : true,
-                compile : function (element, attrs) {
-                    if(attrs.ngModel) {
-                        attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
+                link : function(scope, element, attrs, ctrls) {
+                    var iBem = ctrls[0],
+                        ngModel = ctrls[1];
+
+                    angular.forEach(attrs.$attr, function(attrOrig, attrNormal){
+                        var modName = attrOrig.split('bem-mod-')[1],
+                            eventName = attrOrig.split('bem-event-')[1],
+                            modEvent = attrOrig.split('bem-modevent-')[1],
+                            expression = attrs[attrNormal],
+                            event;
+
+                        if(modName) {
+                            var modExpressionSetter = $parse(expression).assign;
+
+                            scope.$parent.$watch(expression, function(newVal, oldVal){
+                                newVal === undefined && (newVal = false);
+
+                                angular.forEach(iBem.bem, function(block) {
+                                    block.setMod(modName, newVal);
+                                });
+                            });
+
+                            angular.forEach(iBem.bem, function(block) {
+                                block.on({ modName : modName, modVal : '*' }, function(event, data){
+                                    data.modVal === '' && (data.modVal = false);
+
+                                    scope.$parent.$evalAsync(function(){
+                                        modExpressionSetter(scope.$parent, data.modVal);
+                                    });
+                                });
+                            });
+                        }
+
+                        event = modEvent? {
+                            modName : modEvent,
+                            modVal : '*'
+                        } : eventName;
+
+                        if(event) {
+                            angular.forEach(iBem.bem, function(block) {
+                                block.on(event, function(event, data){
+                                    scope.$evalAsync(expression, {
+                                        $bemEvent : {
+                                            event : event,
+                                            target : event.target,
+                                            data : data
+                                        }
+                                    });
+                                });
+                            });
+                        }
+                    });
+
+                    if(!ngModel) return;
+
+                    angular.forEach(iBem.bem, function(v, blockName) {
+                        iBem.bem[blockName].on('change', function(e, data) {
+                            if(data && data.source === 'ng-model') {
+                                scope.$evalAsync(setModelValue.bind(iBem.bem[blockName]));
+                            } else {
+                                scope.$evalAsync(setViewValue.bind(iBem.bem[blockName]));
+                            }
+                        });
+
+                        setModelValue.bind(iBem.bem[blockName])();
+                    });
+
+                    ngModel.$render = function() {
+                        var value = angular.isUndefined(ngModel.$viewValue)? '' : ngModel.$viewValue;
+                        angular.forEach(iBem.bem, function(v, blockName) {
+                            if(iBem.bem[blockName].setVal) {
+                                iBem.bem[blockName].setVal(value, { source : 'ng-model' });
+                            }
+                        });
+                    };
+
+                    function setViewValue() {
+                        ngModel.$setViewValue(this.getVal());
                     }
 
-                    return function(scope, element, attrs, ctrls) {
-                        var iBem = ctrls[0],
-                            ngModel = ctrls[1];
-
-                        angular.forEach(attrs.$attr, function(attrOrig, attrNormal){
-                            var modName = attrOrig.split('bem-mod-')[1],
-                                eventName = attrOrig.split('bem-event-')[1],
-                                modEvent = attrOrig.split('bem-modevent-')[1],
-                                expression = attrs[attrNormal],
-                                event;
-
-                            if(modName) {
-                                var modExpressionSetter = $parse(expression).assign;
-
-                                scope.$parent.$watch(expression, function(newVal, oldVal){
-                                    newVal === undefined && (newVal = false);
-
-                                    angular.forEach(iBem.bem, function(block) {
-                                        block.setMod(modName, newVal);
-                                    });
-                                });
-
-                                angular.forEach(iBem.bem, function(block) {
-                                    block.on({ modName : modName, modVal : '*' }, function(event, data){
-                                        data.modVal === '' && (data.modVal = false);
-
-                                        scope.$parent.$evalAsync(function(){
-                                            modExpressionSetter(scope.$parent, data.modVal);
-                                        });
-                                    });
-                                });
-                            }
-
-                            event = modEvent? {
-                                modName : modEvent,
-                                modVal : '*'
-                            } : eventName;
-
-                            if(event) {
-                                angular.forEach(iBem.bem, function(block) {
-                                    block.on(event, function(event, data){
-                                        scope.$evalAsync(expression, {
-                                            $bemEvent : {
-                                                event : event,
-                                                data : data
-                                            }
-                                        });
-                                    });
-                                });
-                            }
-                        });
-
-                        if(!ngModel) return;
-
-                        angular.forEach(iBem.bem, function(v, blockName) {
-                            iBem.bem[blockName].on('change', function(e, data) {
-                                if(data && data.source === 'ng-model') {
-                                    scope.$evalAsync(setModelValue.bind(iBem.bem[blockName]));
-                                } else {
-                                    scope.$evalAsync(setViewValue.bind(iBem.bem[blockName]));
-                                }
-                            });
-
-                            setModelValue.bind(iBem.bem[blockName])();
-                        });
-
-                        ngModel.$render = function() {
-                            var value = angular.isUndefined(ngModel.$viewValue)? '' : ngModel.$viewValue;
-                            angular.forEach(iBem.bem, function(v, blockName) {
-                                if(iBem.bem[blockName].setVal) {
-                                    iBem.bem[blockName].setVal(value, { source : 'ng-model' });
-                                }
-                            });
-                        };
-
-                        function setViewValue() {
-                            ngModel.$setViewValue(this.getVal());
-                        }
-
-                        function setModelValue() {
-                            // prevents calling of ng-change listeners
-                            ngModel.$modelValue = this.getVal();
-                        }
-                    };
+                    function setModelValue() {
+                        // prevents calling of ng-change listeners
+                        ngModel.$modelValue = this.getVal();
+                    }
                 }
             };
         }
