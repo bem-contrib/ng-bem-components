@@ -29,7 +29,6 @@
     "phantomjs": "1.9.17"
   },
   "optionalDependencies": {},
-  "private": true,
   "scripts": {
     "deps": "bower i",
     "test": "npm run lint && npm run unit",

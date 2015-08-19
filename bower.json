@@ -17,6 +17,5 @@
     "jquery": "~2.1.4",
     "angular-mocks": "~1.4.2"
   },
-  "license": "MIT",
-  "private": true
+  "license": "MIT"
 }
