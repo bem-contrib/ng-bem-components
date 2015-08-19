@@ -13,11 +13,11 @@ modules.define('angular-bem', deps,
             .value('bemdom', BEMDOM)
             .value('bemhtml', BEMHTML)
             .value('bemtree', BEMTREE)
-            .factory('ngbem', ngBemFactory)
+            .factory('ngbem', ngbemFactory)
             .directive('ngBem', ngBemDirective)
-            .directive('bem', iBemDirective);
+            .directive('bem', bemDirective);
 
-        function ngBemFactory(bemhtml, bemtree, $q, $log) {
+        function ngbemFactory(bemhtml, bemtree, $q, $log) {
 
             return render;
 
@@ -92,7 +92,7 @@ modules.define('angular-bem', deps,
             $scope.$bem = this.bem;
         }
 
-        function iBemDirective($parse) {
+        function bemDirective($parse) {
             return {
                 restrict : 'A',
                 require : ['bem', '?ngModel'],
