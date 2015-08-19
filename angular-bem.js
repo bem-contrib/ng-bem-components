@@ -54,7 +54,7 @@ modules.define('angular-bem', deps,
 
         function ngBemDirective(ngbem, bemdom, $compile) {
             return {
-                restrict : 'E',
+                restrict : 'AE',
                 link : function(scope, element, attrs) {
                     var bemjsonExpression = attrs.bemjson || element.text(),
                         useBemtree = !angular.isUndefined(attrs.bemtree);
