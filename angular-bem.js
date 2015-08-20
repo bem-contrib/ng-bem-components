@@ -111,7 +111,7 @@ modules.define('angular-bem', deps,
                         if(modName) {
                             var modExpressionSetter = $parse(expression).assign;
 
-                            scope.$parent.$watch(expression, function(newVal, oldVal){
+                            scope.$watch(expression, function(newVal, oldVal){
                                 newVal === undefined && (newVal = false);
 
                                 angular.forEach(iBem.bem, function(block) {
@@ -123,8 +123,8 @@ modules.define('angular-bem', deps,
                                 block.on({ modName : modName, modVal : '*' }, function(event, data){
                                     data.modVal === '' && (data.modVal = false);
 
-                                    scope.$parent.$evalAsync(function(){
-                                        modExpressionSetter(scope.$parent, data.modVal);
+                                    scope.$evalAsync(function(){
+                                        modExpressionSetter(scope, data.modVal);
                                     });
                                 });
                             });
