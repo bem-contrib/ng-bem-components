@@ -135,8 +135,11 @@ Support for explicit definition which block should be used is planned on near re
 
 ##### Binding to mods
 
-You could bind mods of `i-bem` blocks to scope variable with `bem-mod-mod-name="vm.modName"` syntax.
-Changing scope variable `vm.modName` will change value of mod `mod-name` and vice-versa.
+You could bind mods of `i-bem` blocks to expression result with `bem-mod-mod-name="expression"` syntax.
+`mod-name` would be updated with value `expression` evaluates to each time it changes.
+
+2 way binding to scope variable enabled with `bind:` prefix.
+Changing scope variable `vm.modName` will change value of mod `mod-name` and vice versa when defined with `bem-mod-mod-name="vm.modName"` syntax.
 
 Note, that mod name is case sensitive, but you wouldn't be able to bind several mods if it differs only in case.
 Anyway, using such mods (eg, `disabled` and `Disabled`) at the same time indicates problems in app architecture.

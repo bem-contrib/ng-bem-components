@@ -106,9 +106,13 @@ modules.define('angular-bem', deps,
                             eventName = attrOrig.split('bem-event-')[1],
                             modEvent = attrOrig.split('bem-modevent-')[1],
                             expression = attrs[attrNormal],
+                            bindExpression,
                             event;
 
                         if(modName) {
+                            bindExpression = expression.startsWith('bind:') &&
+                                !!(expression = expression.substring(5));
+
                             var modExpressionSetter = $parse(expression).assign;
 
                             scope.$watch(expression, function(newVal, oldVal){
@@ -119,15 +123,17 @@ modules.define('angular-bem', deps,
                                 });
                             });
 
-                            angular.forEach(iBem.bem, function(block) {
-                                block.on({ modName : modName, modVal : '*' }, function(event, data){
-                                    data.modVal === '' && (data.modVal = false);
+                            if(bindExpression && modExpressionSetter) {
+                                angular.forEach(iBem.bem, function(block) {
+                                    block.on({ modName : modName, modVal : '*' }, function(event, data){
+                                        data.modVal === '' && (data.modVal = false);
 
-                                    scope.$evalAsync(function(){
-                                        modExpressionSetter(scope, data.modVal);
+                                        scope.$evalAsync(function(){
+                                            modExpressionSetter(scope, data.modVal);
+                                        });
                                     });
                                 });
-                            });
+                            }
                         }
 
                         event = modEvent? {
