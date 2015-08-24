@@ -2,7 +2,7 @@
   "author": "Aleksey Gurianov <alexey@gurianov.com>",
   "license": "MIT",
   "name": "ng-bem-components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Angular directives for BEM Components Library",
   "repository": {
     "type": "git",
